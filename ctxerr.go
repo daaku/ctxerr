@@ -28,7 +28,7 @@ const (
 	// StackModeNone is the default and will result in no stack being included.
 	StackModeNone StackMode = iota
 
-	// StackModeFrame triggers inclusion of a single frame, that is only 1
+	// StackModeSingleFrame triggers inclusion of a single frame, that is only 1
 	// callers information.
 	StackModeSingleFrame
 
@@ -127,7 +127,7 @@ func Wrap(ctx context.Context, err error) error {
 	return WrapSkip(ctx, err, 1)
 }
 
-// Wrap may wrap the error and return an augmented error depending on the
+// WrapSkip may wrap the error and return an augmented error depending on the
 // configuration in the context. The defaults result in the error being
 // returned as is. It also handles nils correctly, returning a nil in that
 // case. If the given error is already wrapped, it returns it as-is.
