@@ -87,9 +87,13 @@ func (e *singleFrameError) Underlying() error { return e.underlying }
 
 func (e *singleFrameError) Error() string {
 	if e.config.StringMode == StringModeAll {
-		return fmt.Sprintf("%s %s", e.frame, e.underlying)
+		return e.rich()
 	}
 	return e.underlying.Error()
+}
+
+func (e *singleFrameError) rich() string {
+	return fmt.Sprintf("%s %s", e.frame, e.underlying)
 }
 
 type singleStackError struct {
@@ -102,9 +106,13 @@ func (e *singleStackError) Underlying() error { return e.underlying }
 
 func (e *singleStackError) Error() string {
 	if e.config.StringMode == StringModeAll {
-		return fmt.Sprintf("%s\n%s", e.underlying, e.stack)
+		return e.rich()
 	}
 	return e.underlying.Error()
+}
+
+func (e *singleStackError) rich() string {
+	return fmt.Sprintf("%s\n%s", e.underlying, e.stack)
 }
 
 type multiStackError struct {
@@ -117,9 +125,13 @@ func (e *multiStackError) Underlying() error { return e.underlying }
 
 func (e *multiStackError) Error() string {
 	if e.config.StringMode == StringModeAll {
-		return fmt.Sprintf("%s\n%s", e.underlying, e.multiStack)
+		return e.rich()
 	}
 	return e.underlying.Error()
+}
+
+func (e *multiStackError) rich() string {
+	return fmt.Sprintf("%s\n%s", e.underlying, e.multiStack)
 }
 
 // Wrap calls WrapSkip with skip=1.
@@ -212,4 +224,20 @@ func MultiStack(err error) *stack.Multi {
 		return err.multiStack
 	}
 	return nil
+}
+
+// RichString returns an error string with stack information if available. If
+// none is available, it is the same as using the Error method on the error. It
+// does so ignoring the context configuration. This is useful for example when
+// internally logging an error.
+func RichString(err error) string {
+	type rich interface {
+		rich() string
+	}
+
+	if re, ok := err.(rich); ok {
+		return re.rich()
+	}
+
+	return err.Error()
 }

@@ -276,3 +276,26 @@ func TestMultiStackMultiStack(t *testing.T) {
 func TestMultiStackNotFound(t *testing.T) {
 	ensure.True(t, MultiStack(errors.New("")) == nil)
 }
+
+func TestRichError(t *testing.T) {
+	err := errors.New("foo")
+	ensure.DeepEqual(
+		t,
+		RichString(&singleFrameError{
+			underlying: err,
+			config: Config{
+				StringMode: StringModeNone,
+			},
+			frame: stack.Frame{
+				File: "f",
+				Line: 1,
+				Name: "n",
+			},
+		}),
+		`f:1 n foo`)
+}
+
+func TestPoorError(t *testing.T) {
+	err := errors.New("foo")
+	ensure.DeepEqual(t, RichString(err), `foo`)
+}
