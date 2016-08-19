@@ -1,12 +1,12 @@
 package ctxerr
 
 import (
+	"context"
 	"errors"
 	"testing"
 
 	"github.com/facebookgo/ensure"
 	"github.com/facebookgo/stack"
-	"golang.org/x/net/context"
 )
 
 func TestContextConfig(t *testing.T) {

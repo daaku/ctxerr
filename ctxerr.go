@@ -14,10 +14,10 @@
 package ctxerr
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/facebookgo/stack"
-	"golang.org/x/net/context"
 )
 
 // StackMode defines the modes for capturing stack traces.
